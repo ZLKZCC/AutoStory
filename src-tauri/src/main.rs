@@ -47,6 +47,32 @@ fn main() {
             .center()
             .resizable(true)
             .initialization_script(&init_script)
+            // wry 默认下载行为是 SetHandled 后静默存进系统"下载"目录，用户无感知；
+            // 弹系统"另存为"对话框，取消则中止本次下载
+            .on_download(|_webview, event| {
+                use tauri::webview::DownloadEvent;
+                match event {
+                    DownloadEvent::Requested { destination, .. } => {
+                        let suggested = destination
+                            .file_name()
+                            .map(|n| n.to_string_lossy().to_string())
+                            .unwrap_or_else(|| "有声书.mp3".into());
+                        let picked = rfd::FileDialog::new()
+                            .add_filter("MP3 音频", &["mp3"])
+                            .set_file_name(&suggested)
+                            .save_file();
+                        match picked {
+                            Some(p) => {
+                                *destination = p;
+                                true
+                            }
+                            None => false,
+                        }
+                    }
+                    DownloadEvent::Finished { .. } => true,
+                    _ => false,
+                }
+            })
             .build()
             .expect("创建主窗口失败");
 
