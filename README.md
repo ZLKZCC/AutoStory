@@ -24,6 +24,13 @@ AutoStory 是一个用于写作的AI桌面应用，主要面向长篇小说创�
 
 写的时候可以让 AI 帮忙起草或修改这些内容；本应用还接入了 Qwen3-TTS，所以章节创作完成之后，还可以将指定的章节转换为有声音频。
 
+<p align="center">
+  <img src="MainPage0.png" alt="AutoStory 首页" width="92%" />
+</p>
+<p align="center">
+  <img src="MainPage1.png" alt="创作工作台：正文、大纲、世界线、角色、有声书与 AI 对话" width="92%" />
+</p>
+
 项目目前还处于初期，很多地方还待打磨。
 
 ## 技术架构
@@ -51,6 +58,7 @@ context ─▶ think ─┬─▶ act（工具调用）────────�
 
 ### 环境要求
 
+- NVIDIA 显卡，显存 8GB 及以上（Qwen3-TTS 本地语音合成需要）
 - Node.js 22+ 与 pnpm
 - Python 3.12+
 - Rust 工具链（构建桌面版时需要）

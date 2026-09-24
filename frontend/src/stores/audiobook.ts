@@ -83,5 +83,9 @@ export const useAudiobookStore = defineStore("audiobook", () => {
   const synthOf = (scriptId: number | null): SynthTrack | null =>
     (scriptId != null && synthTracks.get(scriptId)) || null;
 
-  return { step, maxStep, scriptId, busy, anyBusy, shardOf, synthOf, startSynth };
+  const dropShard = (pid: number) => {
+    shards.delete(pid);
+  };
+
+  return { step, maxStep, scriptId, busy, anyBusy, shardOf, synthOf, startSynth, dropShard };
 });

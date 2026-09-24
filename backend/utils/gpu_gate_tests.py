@@ -65,7 +65,7 @@ async def test_cpu_unlimited_capped():
 
 # ── 4 安全阀防饿死 ──────────────────────────────────────────
 async def test_safety_valve_no_starvation():
-    g = make_gate(3)            # 预算 ~2.7GB < 单个 VRAM_TTS(4.5GB)
+    g = make_gate(3)            # 预算 ~2.85GB < 单个 VRAM_TTS(4.5GB)
     await g.reserve_permanent(VRAM_EMBED)
     assert g._budget < VRAM_TTS, "本用例要求预算小于单任务占用"
     done = 0

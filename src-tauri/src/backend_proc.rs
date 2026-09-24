@@ -113,6 +113,8 @@ fn supervise(root: PathBuf, port: u16, token: String) {
 
 fn wait_healthy(root: &Path, port: u16, token: &str) -> Result<(), String> {
     let client = reqwest::blocking::Client::builder()
+        // 健康检查固定打 127.0.0.1，任何情况下都不该走系统代理
+        .no_proxy()
         .timeout(Duration::from_secs(2))
         .build()
         .map_err(|e| format!("构建 HTTP 客户端失败: {e}"))?;

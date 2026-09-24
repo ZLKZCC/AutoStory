@@ -2,6 +2,7 @@ import { ref } from "vue";
 import { defineStore, acceptHMRUpdate } from "pinia";
 import { listProjects, deleteProject, batchDeleteProjects, type ProjectInfo } from "../api";
 import { useChatStore } from "./chat";
+import { useAudiobookStore } from "./audiobook";
 
 export const useProjectStore = defineStore("projects", () => {
   const projects = ref<ProjectInfo[]>([]);
@@ -25,6 +26,7 @@ export const useProjectStore = defineStore("projects", () => {
     await deleteProject(id);
     projects.value = projects.value.filter((p) => p.id !== id);
     useChatStore().dropShard(id);
+    useAudiobookStore().dropShard(id);
   };
 
   const removeProjects = async (ids: number[]) => {
@@ -34,7 +36,11 @@ export const useProjectStore = defineStore("projects", () => {
     const removedIds = new Set<number>(unique);
     projects.value = projects.value.filter((p) => !removedIds.has(p.id!));
     const chat = useChatStore();
-    for (const id of unique) chat.dropShard(id);
+    const audiobook = useAudiobookStore();
+    for (const id of unique) {
+      chat.dropShard(id);
+      audiobook.dropShard(id);
+    }
   };
 
   return {

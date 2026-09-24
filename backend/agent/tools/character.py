@@ -104,7 +104,7 @@ async def create_character(
     Args:
         character_name: 角色名
         gender: 性别,可选
-        role: 定位/身份,可选
+        role: 主角，配角，反派，龙套，其他
 
     Returns:
         创建结果（含新角色 id），用户拒绝或修改则返回对应提示。

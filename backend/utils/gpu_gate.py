@@ -7,7 +7,7 @@ logger = logging.getLogger(__name__)
 _GB = 1024 ** 3
 
 # ── 可调参数（需按真机 GPU 校准；下面给实测/保守默认值）──
-SAFETY_FRACTION = 0.90        # 预算 = 总显存 × 此系数（留给系统/显示/碎片/估算误差）
+SAFETY_FRACTION = 0.98        # 预算 = 总显存 × 此系数（留给系统/显示/碎片/估算误差）
 MAX_CONCURRENT = 4            # 硬性并发上限：显存再富余也不超此数（CPU/内存/磁盘/稳定性都有限）
 VRAM_TTS = int(4.5 * _GB)     # Qwen3-TTS 单模型占用（base/custom_voice/voice_design 实测各 ~4.2GB；
                               # 合成内部串行两趟、任一时刻只驻一个，故按单模型 + 余量估）
