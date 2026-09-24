@@ -34,8 +34,8 @@ AutoStory 是一个用于写作的AI桌面应用，主要面向长篇小说创�
   <img src="MainPage2.png" alt="有声书合成成品：步骤条、合成警告与试听播放器" width="92%" />
 </p>
 
-<details>
-<summary><strong>🎧 有声书试听样例｜样章《等它自己开口》——点击展开对应全文</strong></summary>
+<details open>
+<summary><strong>🎧 有声书试听样例｜样章《等它自己开口》——点击收起/展开全文</strong></summary>
 
 <audio controls preload="metadata" src="audiobook-sample.mp3"></audio>
 
@@ -269,12 +269,17 @@ AutoStory 是一个用于写作的AI桌面应用，主要面向长篇小说创�
 Agent结构：
 
 ```text
-context ─▶ think ─┬─▶ act（工具调用）────────────┐
+context ─▶ think ─┬─▶ act（串行执行全部工具调用）──┐
                   │                              │
-                  ├─▶ audiobook 子图（三处人审）──┤
-                  │                              ▼
-                  └────────────────────────▶ compress（上下文压缩）
+                  ├─ 无调用 ─▶ END                │ 正常：直接回 think
+                  │                              │
+                  └── 超阈值 ─▶ compress ◀────────┘
+                          │
+                          └─▶ think
 ```
+
+- context / act 出口共用同一阈值判定：本轮上下文超阈值就先进 compress 压缩历史，再回 think 继续。
+- 有声书不再单独走子图：整条管线就是 act 里的一个工具，各步骤与各处人审打包成可恢复的任务（`@task`）——人审在中断处 park，裁决后 resume 续跑，已完成步骤重放时命中缓存。
 
 ## 快速开始
 
