@@ -200,4 +200,4 @@ https://github.com/ZLKZCC/AutoStory
 
 ## 许可证
 
-本项目基于 [GNU Affero General Public License v3.0](https://www.gnu.org/licenses/agpl-3.0.html)（2007 年 11 月 19 日版）发布。
+本项目基于 [GNU Affero General Public License v3.0](https://www.gnu.org/licenses/agpl-3.0.html)发布。
