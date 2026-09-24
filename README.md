@@ -34,6 +34,9 @@ AutoStory 是一个用于写作的AI桌面应用，主要面向长篇小说创�
   <img src="MainPage2.png" alt="有声书合成成品：步骤条、合成警告与试听播放器" width="92%" />
 </p>
 
+下载地址:https://github.com/ZLKZCC/AutoStory/releases/   
+下载zip解压，双击autostory.exe可直接运行
+
 <details open>
 <summary><strong>🎧 有声书试听——点击收起/展开全文</strong></summary>
 以下是部分片段，完整片段可下载audiobook-sample.mp3
