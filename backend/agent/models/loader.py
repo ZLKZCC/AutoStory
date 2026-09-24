@@ -139,8 +139,10 @@ async def get_chat_model(purpose: str = "chat"):
     if kind == "qwen" or kind == "qwen_native":
         from agent.models.tongyi import ChatTongyiAI
         base = row.api_url or "https://dashscope.aliyuncs.com"
+        # request_timeout=600：长章节脚本生成一次要几分钟，默认 60s 会在 HTTP 层先超时
         return ChatTongyiAI(model=row.model_id, api_key=api_key,
-                            base_url=base, **temperature_kwargs(row.model_id))
+                            base_url=base, request_timeout=600,
+                            **temperature_kwargs(row.model_id))
 
 
     if kind == "qwen_compat":

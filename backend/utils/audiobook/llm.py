@@ -26,15 +26,15 @@ async def _structured_retry(step: str, schema, prompt: list, retries: int = 3):
     """结构化调用 + 重试（网络/解析/校验同通道）
     统一走 structured_model（function-calling 通道），不再用各厂商 with_structured_output：
     智谱未实现/通义拒 method kwarg/仅 OpenAI 系支持 json_schema——四档差异在统一层抹平。
-    单次调用 180s 超时：LLM 端挂起（连接建立但不返回）时若不设超时，
-    run_pipeline 卡死 → 图流不结束 → awaiting_input 永不发出，前端无限转圈。
+    单次调用 600s 超时：长章节脚本生成动辄几分钟；LLM 端挂起（连接建立但不返回）时
+    若不设超时，run_pipeline 卡死 → 图流不结束 → awaiting_input 永不发出，前端无限转圈。
     """
     model = await get_chat_model("pipeline")
     structured = structured_model(model, schema)
     last_err: Exception | None = None
     for i in range(retries):
         try:
-            return await asyncio.wait_for(structured.ainvoke(prompt), timeout=180)
+            return await asyncio.wait_for(structured.ainvoke(prompt), timeout=600)
         except Exception as e:
             last_err = e
             print(f"[audiobook:{step}] 第{i + 1}次失败: {type(e).__name__}: {e}")

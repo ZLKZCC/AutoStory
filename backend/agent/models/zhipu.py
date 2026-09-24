@@ -125,8 +125,10 @@ class ChatZhipuAI(BaseChatModel):
         """懒加载：zai-sdk 未装时类定义不受影响，实例化调用才报错（显式失败）"""
         if self._client is None:
             from zai import ZhipuAiClient
+            # timeout=600：zai SDK 默认 300s，长章节脚本生成会先在 HTTP 层超时
             self._client = ZhipuAiClient(api_key=self.api_key,
-                                         base_url=self.base_url)
+                                         base_url=self.base_url,
+                                         timeout=600)
         return self._client
 
     def build_payload(self, messages: List[dict], **kwargs) -> dict:

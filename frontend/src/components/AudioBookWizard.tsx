@@ -390,6 +390,7 @@ export default defineComponent({
     const scriptOverview = ref<ScriptOverview | null>(null);
     const scriptJson = ref("");
     const scriptDirty = ref(false);
+    const scriptError = ref("");
 
     const loadScriptContent = async () => {
       if (scriptId.value == null) return;
@@ -417,6 +418,7 @@ export default defineComponent({
     const genScript = async () => {
       if (scriptId.value == null || busy.generatingScript) return;
       busy.generatingScript = true;
+      scriptError.value = "";
       try {
         const d = await panelGenScript(scriptId.value);
         scriptOverview.value = d.data.overview;
@@ -424,6 +426,9 @@ export default defineComponent({
         await refreshState();
       } catch (e) {
         toastErr(e, "脚本生成失败");
+        const detail = e instanceof ApiError ? e.message : "脚本生成失败";
+        scriptError.value = `${detail}。长章节生成脚本耗时较久，请点击重新生成多等一会儿；` +
+          `若反复失败，多为模型服务超时，请到「设置 → 模型设置」检查或更换供应商。`;
       } finally {
         busy.generatingScript = false;
       }
@@ -1018,6 +1023,9 @@ export default defineComponent({
               <div class="abw-card-desc">
                 AI 按配对结果与音频清单排配音脚本，可手工微调后保存。
               </div>
+              {!busy.generatingScript && scriptError.value && (
+                <div class="abw-error-box">{scriptError.value}</div>
+              )}
               {busy.generatingScript ? (
                 <div class="abw-empty">
                   <PhSparkle size={22} weight="light" />
