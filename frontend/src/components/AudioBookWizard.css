@@ -474,6 +474,11 @@
   background: var(--color-accent-subtle);
 }
 
+.abw-player-download-busy {
+  opacity: 0.5;
+  cursor: wait;
+}
+
 .abw-footer {
   display: flex;
   align-items: center;

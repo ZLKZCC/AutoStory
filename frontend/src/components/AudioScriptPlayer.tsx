@@ -7,6 +7,8 @@ import {
   type PropType,
 } from "vue";
 import { PhPlay, PhPause, PhWaveform, PhDownloadSimple } from "@phosphor-icons/vue";
+import { downloadUrl } from "../api";
+import { useToast } from "../stores/toast";
 
 const fmt = (seconds: number) => {
   if (!isFinite(seconds) || seconds < 0) return "0:00";
@@ -148,6 +150,23 @@ export default defineComponent({
       return base ? `${base}.mp3` : props.downloadName;
     });
 
+    const { addToast } = useToast();
+    const downloading = ref(false);
+    // 音频直链是后端跨源地址：<a download> 在跨源下会被忽略、Tauri 还会拦导航，
+    // 必须先 fetch 成 blob（同源 objectURL）再程序化触发下载
+    const onDownload = async (e: MouseEvent) => {
+      e.preventDefault();
+      if (!props.src || downloading.value) return;
+      downloading.value = true;
+      try {
+        await downloadUrl(props.src, downloadFile.value);
+      } catch {
+        addToast({ type: "error", title: "音频下载失败，请重试", duration: 3000 });
+      } finally {
+        downloading.value = false;
+      }
+    };
+
     return () => (
       <div class="audio-player-bar abw-player">
         <audio
@@ -228,14 +247,11 @@ export default defineComponent({
         )}
 
         <a
-          class="abw-player-download"
+          class={`abw-player-download ${downloading.value ? "abw-player-download-busy" : ""}`}
           href={downloadHref.value}
           download={downloadFile.value}
-          title="下载音频"
-          onClick={(e) => {
-            if (!props.src) e.preventDefault();
-            else props.onPlay?.();
-          }}
+          title={downloading.value ? "正在下载…" : "下载音频"}
+          onClick={onDownload}
         >
           <PhDownloadSimple size={14} weight="light" />
         </a>

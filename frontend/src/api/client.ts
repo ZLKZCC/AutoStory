@@ -32,6 +32,22 @@ const withToken = (path: string) => withQuery(path, appToken() ? { token: appTok
 
 export const resolveUrl = (path: string) => withToken(withOrigin(apiOrigin(), path));
 
+// 跨源直链的 <a download> 会被浏览器忽略 download 属性、Tauri 里还会拦截导航；
+// 统一走 fetch → blob（同源 objectURL）→ 程序化触发下载
+export const downloadUrl = async (url: string, filename: string) => {
+  const res = await fetch(url);
+  if (!res.ok) throw new ApiError(res.status, `下载失败(${res.status})`, null);
+  const blob = await res.blob();
+  const objUrl = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = objUrl;
+  a.download = filename.replace(/[\\/:*?"<>|]/g, "_");
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(objUrl);
+};
+
 export class ApiError extends Error {
   readonly status: number;
   readonly payload: unknown;
