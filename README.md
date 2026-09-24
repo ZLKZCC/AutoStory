@@ -67,7 +67,7 @@ context ─▶ think ─┬─▶ act（工具调用）────────�
 
 PyTorch 不放在 requirements 里，需要根据本机显卡情况，从 [PyTorch 官网](https://pytorch.org/get-started/locally/) 安装对应的 CUDA / CPU 版本。
 
-桌面应用的打包版本会在第一次启动时自动处理这些依赖。
+桌面应用的打包版本会在第一次启动时自动处理这些依赖，包括自动安装pytorch。
 
 ### 启动后端
 
@@ -123,29 +123,31 @@ cd ..
 frontend\node_modules\.bin\tauri.cmd build
 ```
 
-### 安装目录
+### 应用目录
 
 ```text
-安装目录/
-├── AutoStory.exe
-├── backend/
+应用目录/
+├── AutoStory.exe         # 桌面壳（安装包自带）
+├── backend/              # 后端，PyInstaller 产物（安装包自带）
 │   ├── autostory-backend.exe
-│   └── _internal/
+│   └── _internal/        # 后端运行环境，不含 PyTorch
 ├── data/
-│   ├── chroma 初始库
-│   ├── 模型
-│   └── 生成产物
-└── runtime/
-    ├── python/            # Python 运行时（PyTorch 宿主）
-    ├── ffmpeg/
-    └── manifest.json      # 已安装项清单（含 torch 变体）
+│   ├── chroma/kb.db/     # 知识库种子（安装包自带）
+│   ├── models/           # 模型文件夹（首次启动自动下载）
+│   └── autostory.db 等   # 业务库与生成产物（运行时生成）
+├── runtime/              # 首次启动自动下载安装
+│   ├── python/           # Python 运行时（PyTorch 宿主）
+│   ├── ffmpeg/
+│   └── manifest.json     # 已安装项清单（含 torch 变体）
+└── logs/                 # 运行日志（运行时生成）
 ```
 
-第一次启动时，应用会自动下载安装：
+安装包只带桌面壳、后端产物和知识库种子，其余在第一次启动时自动下载：
 
 - Python 运行时
-- PyTorch
+- PyTorch（按显卡自动选 CUDA / CPU 版）
 - ffmpeg
+- `data/models/` 下的模型文件夹
 
 ## 项目结构
 
@@ -191,5 +193,3 @@ https://github.com/ZLKZCC/AutoStory
 ## 许可证
 
 本项目基于 [GNU Affero General Public License v3.0](https://www.gnu.org/licenses/agpl-3.0.html)（2007 年 11 月 19 日版）发布。
-
-
