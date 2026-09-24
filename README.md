@@ -80,7 +80,7 @@ https://github.com/user-attachments/assets/1a46d5b3-9941-4f50-af3c-8d28369e7714
 </table>
 
 
-*↑ 音频由 AutoStory 有声书流程合成（多角色音色 + 旁白）。
+*↑ 音频由 AutoStory 有声书流程合成。以下是完整文本内容:
 
 ---
 
