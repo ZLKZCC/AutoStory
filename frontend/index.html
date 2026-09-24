@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/png" href="/logo.png" />
+    <!-- 网络字体一律非阻塞加载（media=print 切换法）：
+         首帧不被 fonts.googleapis.com 卡住（国内网络会拖慢数秒），
+         display=swap 让文字先用系统字体渲染、字体到位后无感替换；
+         打包离线运行时自动回退 PingFang / 微软雅黑 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap"
+      rel="stylesheet"
+      media="print"
+      onload="this.media='all'"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+      media="print"
+      onload="this.media='all'"
+    />
+    <noscript>
+      <link
+        href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap"
+        rel="stylesheet"
+      />
+    </noscript>
+    <!-- Preload self-hosted Latin fonts -->
+    <link
+      rel="preload"
+      href="/fonts/HarmonyOS_Sans_Regular.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link
+      rel="preload"
+      href="/fonts/GeistMono-VF.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <title>AutoStory</title>
+    <style>
+      /* 启动占位符 — 与 BootScreen 首帧同源（黑底 + 品牌字），
+         Vue 挂载前的过渡因此无感：占位符 → BootScreen 视觉连续 */
+      body {
+        margin: 0;
+        background: #0a0a0a;
+      }
+      #root:empty {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        font-family:
+          "HarmonyOS Sans",
+          "Noto Sans SC",
+          "PingFang SC",
+          -apple-system,
+          BlinkMacSystemFont,
+          "Microsoft YaHei",
+          sans-serif;
+        font-size: 36px;
+        font-weight: 700;
+        font-style: italic;
+        letter-spacing: -0.5px;
+        animation: boot-ph-fade 0.6s ease-out;
+      }
+      #root:empty::before {
+        content: "Auto";
+        color: #e0e0e0;
+      }
+      #root:empty::after {
+        content: "Story";
+        color: #d96830;
+        padding-right: 0.15em;
+      }
+      @keyframes boot-ph-fade {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

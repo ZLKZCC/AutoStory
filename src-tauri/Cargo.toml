@@ -1,0 +1,23 @@
+[package]
+name = "autostory"
+version = "0.1.0"
+description = "AutoStory - AI 小说创作与有声书生成"
+authors = ["AutoStory"]
+edition = "2021"
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+tauri = { version = "2", features = [] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+reqwest = { version = "0.12", features = ["blocking"] }
+zip = "2"
+flate2 = "1"
+uuid = { version = "1", features = ["v4"] }
+fs2 = "0.4"
+
+[target.'cfg(windows)'.dependencies]
+webview2-com-sys = "0.38"
+windows-core = "0.61"

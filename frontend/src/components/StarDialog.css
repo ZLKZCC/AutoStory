@@ -1,0 +1,53 @@
+.star-dialog {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 6px 8px 2px;
+}
+
+.star-dialog-badge {
+  width: 52px;
+  height: 52px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-accent-light);
+  color: var(--color-accent);
+  margin-bottom: 14px;
+}
+
+.star-dialog-text {
+  margin: 0;
+  max-width: 320px;
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--color-text-secondary);
+}
+
+.star-dialog-link {
+  margin-top: 14px;
+  padding: 6px 14px;
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  background: var(--color-canvas-alt);
+  color: var(--color-accent);
+  font-family: "Geist Mono", monospace;
+  font-size: 12px;
+  cursor: pointer;
+  transition:
+    border-color 0.18s ease,
+    background 0.18s ease;
+}
+
+.star-dialog-link:hover {
+  border-color: var(--color-accent);
+  background: var(--color-accent-light);
+}
+
+.star-dialog-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}

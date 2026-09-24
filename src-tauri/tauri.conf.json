@@ -1,0 +1,32 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "AutoStory",
+  "version": "0.1.0",
+  "identifier": "com.autostory.app",
+  "build": {
+    "frontendDist": "../frontend/dist",
+    "devUrl": "http://localhost:5173",
+    "beforeDevCommand": "pnpm --dir ../frontend run dev",
+    "beforeBuildCommand": "pnpm --dir ../frontend run build"
+  },
+  "app": {
+    "security": {
+      "csp": null
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": "nsis",
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.icns",
+      "icons/icon.ico"
+    ],
+    "resources": {
+      "../backend/dist/autostory-backend": "backend/",
+      "../data/chroma/kb.db/": "data/chroma/kb.db/"
+    }
+  }
+}

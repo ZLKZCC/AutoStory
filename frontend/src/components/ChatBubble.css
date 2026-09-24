@@ -1,0 +1,50 @@
+.chat-msg-bubble-wrap {
+  position: relative;
+  display: inline-block;
+  max-width: 100%;
+}
+
+.thinking-status-text {
+  margin-left: 6px;
+  font-size: 12px;
+  color: var(--color-text-muted);
+  white-space: nowrap;
+}
+
+.chat-copy-btn {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  background: var(--color-surface-solid);
+  color: var(--color-text-muted);
+  cursor: pointer;
+  opacity: 0;
+  transform: scale(0.85);
+  transition: opacity 0.18s ease, transform 0.18s ease, color 0.15s ease;
+  z-index: 5;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.chat-msg-bubble-wrap:hover .chat-copy-btn {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.chat-copy-btn:hover {
+  color: var(--color-accent);
+  border-color: var(--color-accent);
+}
+
+.chat-copy-btn.copied {
+  color: var(--color-success);
+  border-color: var(--color-success);
+  opacity: 1;
+  transform: scale(1);
+}

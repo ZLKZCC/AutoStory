@@ -1,0 +1,157 @@
+textarea {
+  resize: none;
+}
+
+@font-face {
+  font-family: "Geist Sans";
+  font-style: normal;
+  font-display: swap;
+  font-weight: 100 900;
+  src: url("/fonts/GeistSans-VF.woff2") format("woff2-variations");
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
+    U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212,
+    U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: "Geist Mono";
+  font-style: normal;
+  font-display: swap;
+  font-weight: 100 900;
+  src: url("/fonts/GeistMono-VF.woff2") format("woff2-variations");
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
+    U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212,
+    U+2215, U+FEFF, U+FFFD;
+}
+
+:root {
+  --color-canvas: #ffffff;
+  --color-canvas-alt: #f8f6f4;
+  --color-surface: rgba(255, 255, 255, 0.65);
+  --color-surface-solid: #ffffff;
+  --color-surface-hover: rgba(255, 255, 255, 0.82);
+
+  --color-text: #2d2118;
+  --color-text-primary: #2d2118;
+  --color-text-secondary: #7a6b5f;
+  --color-text-muted: #b09a8a;
+
+  --color-accent: #d96830;
+  --color-accent-hover: #c25a24;
+  --color-accent-light: #fef0e6;
+  --color-accent-subtle: rgba(217, 104, 48, 0.07);
+
+  --color-success: #3d8a4a;
+  --color-success-bg: #eaf5ec;
+  --color-warning: #a87020;
+  --color-warning-bg: #fdf5e4;
+  --color-error: #b83838;
+  --color-error-bg: #fce8e8;
+  --color-info: #4478a8;
+  --color-info-bg: #e6f0fa;
+
+  --color-border: rgba(180, 150, 120, 0.18);
+  --color-border-light: rgba(180, 150, 120, 0.09);
+
+  --sidebar-bg: rgba(245, 243, 241, 0.96);
+  --sidebar-text: #6b6560;
+  --sidebar-text-active: #1a1a1a;
+  --sidebar-hover: rgba(0, 0, 0, 0.04);
+  --sidebar-active: rgba(217, 104, 48, 0.08);
+  --sidebar-width: 228px;
+
+  --glass-bg: rgba(255, 255, 255, 0.42);
+  --glass-bg-hover: rgba(255, 255, 255, 0.58);
+  --glass-border: rgba(255, 255, 255, 0.32);
+  --glass-inner-highlight: inset 0 1px 1px rgba(255, 255, 255, 0.2);
+  --glass-blur: 24px;
+  --glass-saturate: 180%;
+
+  --bezel-shell-bg: rgba(180, 140, 100, 0.04);
+  --bezel-shell-border: rgba(180, 140, 100, 0.1);
+  --bezel-shell-padding: 6px;
+  --bezel-outer-radius: 20px;
+  --bezel-inner-radius: 14px;
+
+  --radius-xs: 6px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+  --radius-2xl: 24px;
+  --radius-full: 9999px;
+
+  --shadow-xs: 0 1px 2px rgba(140, 90, 50, 0.04);
+  --shadow-sm: 0 2px 8px rgba(140, 90, 50, 0.05);
+  --shadow-md: 0 8px 24px rgba(140, 90, 50, 0.07);
+  --shadow-lg: 0 16px 48px rgba(140, 90, 50, 0.09);
+  --shadow-glow: 0 0 48px rgba(217, 104, 48, 0.06);
+  --shadow-inner: inset 0 1px 1px rgba(255, 255, 255, 0.15);
+
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-heavy: cubic-bezier(0.32, 0.72, 0, 1);
+  --duration-fast: 150ms;
+  --duration-normal: 300ms;
+  --duration-slow: 600ms;
+  --duration-enter: 500ms;
+
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
+  --space-2xl: 48px;
+  --space-3xl: 64px;
+
+  --font-sans:
+    "Geist Sans", "Noto Sans SC", "PingFang SC", -apple-system,
+    BlinkMacSystemFont, "Microsoft YaHei", sans-serif;
+  --font-mono: "Geist Mono", "SF Mono", "JetBrains Mono", "Consolas", monospace;
+}
+
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  overflow: hidden;
+}
+
+body {
+  font-family: var(--font-sans);
+  color: var(--color-text);
+  background: var(--color-canvas);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-size: 13px;
+}
+
+.sidebar,
+.boot-screen,
+button,
+.btn,
+.tag,
+.badge,
+.sidebar-item-label,
+.sidebar-section-label,
+.sidebar-brand,
+.sidebar-batch-bar,
+nav,
+[role="button"],
+[role="tab"],
+[role="navigation"] {
+  -webkit-user-select: none;
+  user-select: none;
+}

@@ -1,0 +1,161 @@
+.dc-bubble {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px 0;
+  padding: 4px 10px;
+  margin: 4px 0;
+  border-radius: 16px;
+  font-size: 12px;
+  max-width: 100%;
+}
+
+.dc-text {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.dc-text > .dc-icon,
+.dc-text > .dc-label,
+.dc-text > .dc-entity {
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.dc-action-create {
+  background: rgba(52, 199, 89, 0.06);
+  border: 1px solid rgba(52, 199, 89, 0.15);
+}
+.dc-action-create .dc-icon { color: #34c759; }
+.dc-action-create .dc-label { color: #34c759; font-weight: 500; }
+.dc-action-create .dc-status-icon { color: #34c759; }
+
+.dc-action-update {
+  background: rgba(90, 130, 230, 0.06);
+  border: 1px solid rgba(90, 130, 230, 0.15);
+}
+.dc-action-update .dc-icon { color: #5a82e6; }
+.dc-action-update .dc-label { color: #5a82e6; font-weight: 500; }
+.dc-action-update .dc-status-icon { color: #5a82e6; }
+
+.dc-action-delete {
+  background: rgba(255, 69, 58, 0.06);
+  border: 1px solid rgba(255, 69, 58, 0.15);
+}
+.dc-action-delete .dc-icon { color: #ff453a; }
+.dc-action-delete .dc-label { color: #ff453a; font-weight: 500; }
+.dc-action-delete .dc-status-icon { color: #ff453a; }
+
+.dc-entity {
+  color: var(--color-text-secondary);
+  font-weight: 400;
+  white-space: nowrap;
+}
+
+.dc-summary {
+  color: var(--color-text-secondary);
+  font-weight: 400;
+  font-size: 11px;
+  opacity: 0.85;
+  margin-left: 2px;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dc-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: 4px;
+  flex-shrink: 0;
+}
+
+.dc-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 2px 8px;
+  border-radius: 10px;
+  border: none;
+  font-size: 11px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  line-height: 1;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.dc-btn-confirm {
+  background: rgba(52, 199, 89, 0.1);
+  color: #34c759;
+}
+.dc-btn-confirm:hover {
+  background: rgba(52, 199, 89, 0.2);
+}
+
+.dc-btn-revert {
+  background: rgba(255, 69, 58, 0.08);
+  color: #ff453a;
+}
+.dc-btn-revert:hover {
+  background: rgba(255, 69, 58, 0.18);
+}
+
+.dc-status-reverted {
+  opacity: 0.55;
+  text-decoration: line-through;
+}
+
+.dc-status-pending {
+  border-style: dashed;
+}
+
+.dc-status-resolving {
+  border-style: dashed;
+  animation: dc-resolving-pulse 1.2s ease-in-out infinite;
+}
+@keyframes dc-resolving-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+.dc-resolving {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: 4px;
+  padding: 2px 8px;
+  font-size: 11px;
+  line-height: 1;
+  white-space: nowrap;
+  color: var(--color-text-secondary);
+  flex-shrink: 0;
+}
+.dc-spinner {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(120, 130, 150, 0.25);
+  border-top-color: #5a82e6;
+  animation: dc-spin 0.7s linear infinite;
+}
+@keyframes dc-spin {
+  to { transform: rotate(360deg); }
+}
+
+.dc-status-failed {
+  background: rgba(255, 69, 58, 0.08);
+  border: 1px solid rgba(255, 69, 58, 0.3);
+}
+.dc-status-failed .dc-label {
+  color: #ff453a;
+  font-weight: 500;
+}
+.dc-fail-icon {
+  color: #ff453a;
+  flex-shrink: 0;
+}

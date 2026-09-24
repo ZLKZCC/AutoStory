@@ -1,0 +1,312 @@
+.boot-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #0a0a0a;
+  overflow: hidden;
+}
+
+.boot-particles {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(
+      ellipse 600px 400px at 30% 40%,
+      rgba(217, 104, 48, 0.06) 0%,
+      transparent 70%
+    ),
+    radial-gradient(
+      ellipse 500px 350px at 70% 60%,
+      rgba(255, 176, 136, 0.04) 0%,
+      transparent 70%
+    );
+  animation: boot-particle-drift 8s ease-in-out infinite alternate;
+}
+
+@keyframes boot-particle-drift {
+  0% {
+    transform: translate(0, 0) scale(1);
+  }
+  100% {
+    transform: translate(20px, -10px) scale(1.05);
+  }
+}
+
+.boot-content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  max-width: 480px;
+  width: 90%;
+}
+
+.boot-logo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 8px;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.boot-logo-img {
+  width: 80px;
+  height: 80px;
+  border-radius: 20px;
+  filter: drop-shadow(0 0 30px rgba(217, 104, 48, 0.3));
+  animation: boot-logo-pulse 3s ease-in-out infinite;
+}
+
+@keyframes boot-logo-pulse {
+  0%,
+  100% {
+    filter: drop-shadow(0 0 30px rgba(217, 104, 48, 0.3));
+    transform: scale(1);
+  }
+  50% {
+    filter: drop-shadow(0 0 40px rgba(217, 104, 48, 0.5));
+    transform: scale(1.03);
+  }
+}
+
+.boot-logo-text {
+  font-size: 36px;
+  font-weight: 700;
+  font-style: italic;
+  letter-spacing: -0.5px;
+}
+
+.boot-auto {
+  color: #e0e0e0;
+}
+
+.boot-story {
+  background: linear-gradient(90deg, #d96830, #ffb088, #d96830);
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  padding-right: 0.15em;
+  animation: boot-brand-shimmer 4s ease-in-out infinite;
+}
+
+@keyframes boot-brand-shimmer {
+  0%,
+  100% {
+    background-position: 0% center;
+  }
+  50% {
+    background-position: 200% center;
+  }
+}
+
+.boot-status {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.7);
+  text-align: center;
+  min-height: 20px;
+}
+
+.boot-progress-container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.boot-progress-bar {
+  width: 100%;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 3px;
+  overflow: hidden;
+  position: relative;
+  border: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.boot-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #c25a24, #d96830, #ffb088);
+  border-radius: 3px;
+  transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  box-shadow: 0 0 16px rgba(217, 104, 48, 0.35);
+}
+
+.boot-progress-fill::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.25) 50%,
+    transparent 100%
+  );
+  animation: boot-fill-shimmer 2s ease-in-out infinite;
+}
+
+@keyframes boot-fill-shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(200%);
+  }
+}
+
+.boot-progress-indeterminate {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 40%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(217, 104, 48, 0.6),
+    rgba(255, 176, 136, 0.4),
+    transparent
+  );
+  border-radius: 3px;
+  animation: boot-indeterminate-slide 1.8s cubic-bezier(0.65, 0, 0.35, 1)
+    infinite;
+}
+
+@keyframes boot-indeterminate-slide {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(350%);
+  }
+}
+
+.boot-progress-text {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.45);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.5px;
+}
+
+.boot-progress-ready {
+  color: rgba(217, 104, 48, 0.7);
+  animation: boot-ready-fade 0.6s ease-out;
+}
+
+@keyframes boot-ready-fade {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.boot-info {
+  font-size: 12px;
+  text-align: center;
+}
+
+.boot-cuda-ok {
+  color: #4ade80;
+}
+
+.boot-cuda-fallback {
+  color: #fbbf24;
+}
+
+.boot-download-list {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-height: 160px;
+  overflow-y: auto;
+}
+
+.boot-download-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.boot-download-name {
+  color: rgba(255, 255, 255, 0.7);
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  margin-right: 12px;
+}
+
+.boot-download-status {
+  color: rgba(255, 255, 255, 0.5);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.boot-ffmpeg-hint {
+  width: 100%;
+  padding: 12px;
+  border-radius: 8px;
+  background: rgba(251, 191, 36, 0.08);
+  border: 1px solid rgba(251, 191, 36, 0.2);
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.7);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.boot-ffmpeg-cmd {
+  display: block;
+  padding: 4px 8px;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 4px;
+  font-family: monospace;
+  font-size: 11px;
+  color: #fbbf24;
+}
+
+.boot-ffmpeg-link {
+  color: #d96830;
+  text-decoration: none;
+  font-size: 11px;
+}
+
+.boot-ffmpeg-link:hover {
+  text-decoration: underline;
+}
+
+.boot-skip-btn {
+  margin-top: 16px;
+  padding: 8px 24px;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.6);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.boot-skip-btn:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
+}

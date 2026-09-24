@@ -1,0 +1,113 @@
+.vlist-wrapper {
+  position: relative;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.vlist-wrapper [data-virtuoso-scroller] {
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-border) transparent;
+}
+
+.vlist-wrapper [data-virtuoso-scroller]::-webkit-scrollbar {
+  width: 5px;
+}
+
+.vlist-wrapper [data-virtuoso-scroller]::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: var(--radius-full);
+}
+
+.vlist-footer {
+  display: flex;
+  justify-content: center;
+  padding: var(--space-md) 0;
+  min-height: 40px;
+}
+
+.vlist-loader {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.vlist-loader-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--color-text-muted);
+  animation: vlist-bounce 1.2s var(--ease-in-out) infinite;
+}
+
+.vlist-loader-dot:nth-child(2) {
+  animation-delay: 0.15s;
+}
+
+.vlist-loader-dot:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+@keyframes vlist-bounce {
+  0%,
+  80%,
+  100% {
+    transform: scale(0.6);
+    opacity: 0.4;
+  }
+  40% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.vlist-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-3xl) 0;
+  color: var(--color-text-muted);
+  font-size: 13px;
+}
+
+.vlist-scroll-top {
+  position: absolute;
+  bottom: 16px;
+  right: 16px;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface-solid);
+  box-shadow: var(--shadow-sm);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-secondary);
+  transition: all var(--duration-fast) var(--ease-out);
+  z-index: 10;
+}
+
+.vlist-scroll-top:hover {
+  background: var(--color-accent-light);
+  color: var(--color-accent);
+  border-color: var(--color-accent);
+  box-shadow: var(--shadow-md);
+}
+
+.vlist-count {
+  position: absolute;
+  bottom: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 11px;
+  color: var(--color-text-muted);
+  background: var(--color-surface-solid);
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-full);
+  padding: 2px 10px;
+  pointer-events: none;
+  z-index: 10;
+}
