@@ -127,14 +127,14 @@ frontend\node_modules\.bin\tauri.cmd build
 
 ```text
 应用目录/
-├── AutoStory.exe         # 桌面壳（安装包自带）
-├── backend/              # 后端，PyInstaller 产物（安装包自带）
+├── AutoStory.exe         # 桌面壳，Tauri 生成
+├── backend/              # 后端，PyInstaller 产物
 │   ├── autostory-backend.exe
 │   └── _internal/        # 后端运行环境，不含 PyTorch
 ├── data/
-│   ├── chroma/kb.db/     # 知识库种子（安装包自带）
+│   ├── chroma/kb.db/     # 知识库种子（写作相关的一些知识）
 │   ├── models/           # 模型文件夹（首次启动自动下载）
-│   └── autostory.db 等   # 业务库与生成产物（运行时生成）
+│   └── autostory.db 等   # 业务库与生成产物（运行时自生成）
 ├── runtime/              # 首次启动自动下载安装
 │   ├── python/           # Python 运行时（PyTorch 宿主）
 │   ├── ffmpeg/
