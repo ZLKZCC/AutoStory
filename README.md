@@ -67,7 +67,7 @@ context ─▶ think ─┬─▶ act（工具调用）────────�
 
 PyTorch 不放在 requirements 里，需要根据本机显卡情况，从 [PyTorch 官网](https://pytorch.org/get-started/locally/) 安装对应的 CUDA / CPU 版本。
 
-桌面应用的打包版本会在第一次启动时自动处理这些依赖。
+桌面应用的打包版本会在第一次启动时自动处理这些依赖，包括自动安装pytorch。
 
 ### 启动后端
 
