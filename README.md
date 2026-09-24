@@ -37,7 +37,7 @@ AutoStory 是一个用于写作的AI桌面应用，主要面向长篇小说创�
 <details open>
 <summary><strong>🎧 有声书试听——点击收起/展开全文</strong></summary>
 
-<audio controls preload="metadata" src="audiobook-sample.mp3"></audio>
+![AutoStory 有声书音频示例](audiobook-sample.mp4)
 
 *↑ 音频由 AutoStory 有声书流程合成（多角色音色 + 旁白）。若播放器未显示，[点此在浏览器中收听](audiobook-sample.mp3)。*
 
