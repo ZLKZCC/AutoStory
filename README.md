@@ -386,13 +386,13 @@ https://github.com/user-attachments/assets/1a46d5b3-9941-4f50-af3c-8d28369e7714
 #### Agent 主图
 
 ```text
-context ─▶ think ─┬─▶ act（串行执行全部工具调用）──┐
-                    │                                                                   │
-                   ├─ 无调用            ─▶ END                           │ 正常：直接回 think
-                  │                                                                  │
-                 └── 超阈值 ─▶  compress   ◀────────┘
+context ─▶ think ─┬─▶ act（串行执行全部工具调用）───────┐
+                   │                                   │
+                   ├─    无调用   ─▶ END               │ 正常：直接回 think
+                   │                                   │
+                   └── 超阈值 ─▶  compress   ◀────────┘
                            │
-                          └─▶ think
+                           └─────▶ think
 ```
 
 - context 与 act 出口共用同一阈值判定：本轮上下文超过阈值时进入 compress 压缩历史，压缩完成后返回 think；未超阈值时 act 直接返回 think。
