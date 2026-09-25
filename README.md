@@ -355,7 +355,7 @@ https://github.com/user-attachments/assets/1a46d5b3-9941-4f50-af3c-8d28369e7714
 - **按项目分片**：`chat`（消息、发送态、输入草稿、中断现场，每项目一份）、`audiobook`（向导步进），随项目删除一并清理；
 - **当前工作台 / 全局**：`chapter` + `volume`（当前项目的卷章数据）、`workspace`（项目装载入口）、`projects`、`providers`、`resources`、`knowledge`、`modelSync`（下载进度）、`toast`。
 
-对话链路基于 SSE：`POST /autostory/chat/sendmessage` 返回事件流，信封事件驱动聊天气泡增量渲染；工具调用与人审卡（审批 / 有声书审核）复用同一事件流，用户确认后经 `POST /autostory/chat/resume` 从断点续跑。
+对话链路基于 SSE：`POST /autostory/chat/sendmessage` 返回事件流，信封事件驱动聊天气泡增量渲染；工具调用与中断审核卡（审批 / 有声书审核）复用同一事件流，用户确认后经 `POST /autostory/chat/resume` 从断点续跑。
 
 ### 后端 `backend/`
 
@@ -395,7 +395,7 @@ context ─▶ think ─┬─▶ act（串行执行全部工具调用）──�
 
 - context 与 act 出口共用同一阈值判定：本轮上下文超过阈值时进入 compress 压缩历史，压缩完成后返回 think；未超阈值时 act 直接返回 think。
 - 工具按业务域注册：project / volume / chapter / character 的读写工具，research 检索类（素材库、写作经验、联网搜索与网页抓取），chatrecord，delegation 子代理委派，audiobook 管线。act 节点串行执行本轮全部工具调用。
-- 写入类工具与关键决策处设置人审中断：执行至 `request_approval` 时图在断点挂起（park），前端渲染审核卡；用户选择经 `resume` 提交后从断点续跑。每个项目同一时刻仅允许一个运行中的会话（单 run 闸门）。
+- 写入类工具与关键决策处设置中断。
 
 #### 子代理
 
@@ -403,10 +403,10 @@ context ─▶ think ─┬─▶ act（串行执行全部工具调用）──�
 
 #### 有声书管线
 
-`agent/audiobook_pipeline.py` 为一条九步流水线。对话入口（工具调用 + 5 处人审）与面板入口（`panel/*` REST 接口 + 向导 UI）共用同一套阶段产物；产物逐步落库，支持断点续跑：
+`agent/audiobook_pipeline.py` 为一条九步流水线。对话入口（工具调用 + 5 处中断审核）与面板入口（`panel/*` REST 接口 + 向导 UI）共用同一套阶段产物；产物逐步落库，支持断点续跑：
 
 ```text
-① 选章节 → ② 命名（人审）→ ③ 提取出场人物 → ④ 新建角色提案（人审）→ ⑤ 配对（人审）→ ⑥ 音色映射 BGM / SFX → ⑦ 旁白音色（人审）→ ⑧ 生成分段脚本（人审）→ ⑨ 合成（逐段 TTS + 混音）
+① 选章节 → ② 命名（中断审核）→ ③ 提取出场人物 → ④ 新建角色提案（中断审核）→ ⑤ 配对（中断审核）→ ⑥ 音色映射 BGM / SFX → ⑦ 旁白音色（中断审核）→ ⑧ 生成分段脚本（中断审核）→ ⑨ 合成（逐段 TTS + 混音）
 ```
 
 合成期间由 GPU 闸门限流：按显存预算（总显存 × 安全系数）与瞬态任务并发上限放行 TTS 任务，bge-m3 的常驻占用提前扣除，避免语音合成与向量化争用显存。
