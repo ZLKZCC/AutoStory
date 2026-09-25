@@ -37,9 +37,10 @@ AutoStory 是一个用于写作的AI桌面应用，主要面向长篇小说创�
 下载地址:https://github.com/ZLKZCC/AutoStory/releases/   
 下载zip解压，双击autostory.exe可直接运行
 
-<details open>
-<summary><strong>🎧 有声书试听——点击收起/展开全文</strong></summary>
-以下是部分片段，完整片段可下载audiobook-sample.mp3
+### 🎧 有声书试听
+
+以下片段由 AutoStory 有声书流程合成（旁白 + 多角色音色）：
+
 <table>
 <tr>
 <td>
@@ -80,11 +81,11 @@ https://github.com/user-attachments/assets/1a46d5b3-9941-4f50-af3c-8d28369e7714
 </table>
 
 
-*↑ 音频由 AutoStory 有声书流程合成。以下是完整文本内容:
+完整音频（14:49）：[audiobook-sample.mp3](audiobook-sample.mp3)
 
----
-<table>
-<tr><td>
+<details>
+<summary><strong>📜 完整文本《等它自己开口》——点击展开 / 收起</strong></summary>
+
 打铜巷早上有股铁腥味。
 
 巷子窄，两边是矮房，屋檐快碰在一起。从前这里打铜器，一溜十几家炉子，如今剩三家五金铺、一个修鞋摊、一家卖早点。林砚的铺子在巷子中段，门脸一米八宽，木门上挂块旧匾，漆掉了大半，剩三个字能认：拾遗斋。
@@ -292,8 +293,7 @@ https://github.com/user-attachments/assets/1a46d5b3-9941-4f50-af3c-8d28369e7714
 "看这本书的人，不止他一个。"
 
 台灯的光罩在桌面上一个圆里。屋里只有他一个人。窗外巷子里，老周在收摊，铁架子磕在地上，响了一声。
-</td></tr>
-</table>
+
 </details>
 
 项目目前还处于初期，很多地方还待打磨。
@@ -309,7 +309,81 @@ https://github.com/user-attachments/assets/1a46d5b3-9941-4f50-af3c-8d28369e7714
 
 后端一部分是常规的业务接口，负责作品、卷、章节、角色这些数据的增删改查；另一部分是 LangGraph 编排的 Agent。两边共用同一套数据库。
 
-Agent结构：
+### 总体结构
+
+```text
+┌─ AutoStory.exe（Tauri 壳）──────────────────────────────────┐
+│  WebView2 窗口                                               │
+│  ┌─ 前端 frontend/dist（随壳打包）────────────────────────┐  │
+│  │  页面 / 组件 / Pinia store / api 封装                  │  │
+│  └───────────────────┬──────────────────────────────────┘  │
+│                      │ HTTP / SSE / WebSocket（仅回环）      │
+│  ┌───────────────────▼──────────────────────────────────┐  │
+│  │  后端 autostory-backend.exe（PyInstaller 产物）        │  │
+│  │  FastAPI 路由 ─ SQLite / Chroma ─ Agent（LangGraph）   │  │
+│  └───────────────────┬──────────────────────────────────┘  │
+│                      │                                       │
+│  运行时管理：python（PyTorch 宿主）· ffmpeg · 本地模型      │
+└─────────────────────────────────────────────────────────────┘
+```
+
+三层各自独立成目录：桌面壳仅承担窗口管理与进程编排，业务逻辑位于前端与后端。
+
+### 桌面壳 `src-tauri/`
+
+桌面壳不承载业务逻辑，职责集中在四方面：
+
+- **启动握手**：release 构建下随机选取空闲端口并生成 UUID 令牌，经初始化脚本注入 `window.__AUTOSTORY_PORT__` / `window.__AUTOSTORY_TOKEN__`。前端据此将全部请求发往 `127.0.0.1:{port}`，令牌经 `X-App-Token` 头或 `?token=` 查询参数传递，由后端校验。
+- **后端进程守护**：启动后轮询 `/api/health` 直至就绪；运行期间以 2 秒间隔探活，进程异常退出时自动重启（上限 3 次）；应用退出时一并结束后端进程。
+- **首次启动自举**：按依赖顺序安装 Python 嵌入式运行时、PyTorch（依据显卡选择 CUDA / CPU 版本）、ffmpeg；各步骤进度经 `prepare_environment` 命令暴露，由前端 BootScreen 轮询渲染。
+- **下载接管**：接管 WebView2 下载事件，弹出的系统"另存为"对话框确定保存路径（WebView2 缺省行为为静默保存至系统下载目录）。
+
+### 前端 `frontend/`
+
+五个路由页：
+
+| 路由 | 页面 | 内容 |
+| --- | --- | --- |
+| `/` | Home | 作品列表、新建 / 批量管理 |
+| `/project/:id` | Project | 创作工作台：卷章树、正文编辑、可视化世界线、角色、AI 对话、有声书向导 |
+| `/settings` | Settings | 模型供应商管理、本地模型同步 |
+| `/resources` | Resources | 音频库（BGM / SFX） |
+| `/knowledge-base` | KnowledgeBase | 素材库：导入、分块、向量检索 |
+
+`src/api/` 为统一接口层。`client.ts` 承担全部横切职责：基址取注入端口、令牌头注入、SSE（基于 fetch-event-source）、WebSocket 自动重连、直链资源（音频等）以 `?token=` 查询参数携带令牌。其余模块按业务域拆分（projects / chapters / characters / chat / audiobook / resources / knowledgeBase 等），页面层不直接调用 fetch。
+
+`src/stores/` 中 Pinia 状态分两类：
+
+- **按项目分片**：`chat`（消息、发送态、输入草稿、中断现场，每项目一份）、`audiobook`（向导步进），随项目删除一并清理；
+- **当前工作台 / 全局**：`chapter` + `volume`（当前项目的卷章数据）、`workspace`（项目装载入口）、`projects`、`providers`、`resources`、`knowledge`、`modelSync`（下载进度）、`toast`。
+
+对话链路基于 SSE：`POST /autostory/chat/sendmessage` 返回事件流，信封事件驱动聊天气泡增量渲染；工具调用与人审卡（审批 / 有声书审核）复用同一事件流，裁决后经 `POST /autostory/chat/resume` 从断点续跑。
+
+### 后端 `backend/`
+
+#### 入口与中间件
+
+`main.py` 装配两层安全中间件：回环来源与 Host 校验（`LoopbackOnlyMiddleware`）、令牌校验（`AppTokenMiddleware`，请求头或查询参数均可）。壳注入的 `AUTOSTORY_PORT` / `AUTOSTORY_ROOT` / `AUTOSTORY_APP_TOKEN` 环境变量分别决定监听端口、数据目录与令牌；开发模式固定 8080 且不启用令牌。应用启动时完成建表迁移、Chroma 初始化与 bge-m3 常驻加载。
+
+#### 业务接口
+
+所有路由统一挂在 `/autostory/` 前缀下，按域分组：
+
+| 域 | 前缀 | 主要端点 |
+| --- | --- | --- |
+| 作品 | `/project` | CRUD、概念 / 世界线读写、文件解析入库、素材库挂载 |
+| 卷 / 章节 | `/volume` `/chapter` | 卷 CRUD、章节增删改查、插入、拖拽重排 |
+| 角色 | `/character` `/characterstage` | 角色与阶段 CRUD、阶段音色生成与试听 |
+| 对话 | `/chat` | `sendmessage` / `resume` / `cancel`（SSE）、`context_size` |
+| 对话记录 | `/chatrecord` | 历史记录 CRUD |
+| 有声书 | `/audiobookscript` | `panel/*` 面板九步接口（见下）、合成 SSE 流、脚本 CRUD |
+| 音频库 | `/resource` | BGM / SFX 上传管理、脚本-音频映射 |
+| 素材 | `/material` | 导入（异步任务 + 进度）、分块、向量检索 |
+| 供应商 | `/provider` | LLM 供应商 CRUD、连通性测试、激活切换 |
+| 运行环境 | `/environment` `/gpu` | 本地模型检查、`sync_model` WS 下载进度、GPU 闸门状态 |
+| 偏好 | `/userpreference` | 分块模型参数等用户偏好 |
+
+#### Agent 主图
 
 ```text
 context ─▶ think ─┬─▶ act（串行执行全部工具调用）──┐
@@ -321,8 +395,36 @@ context ─▶ think ─┬─▶ act（串行执行全部工具调用）──�
                           └─▶ think
 ```
 
-- context / act 出口共用同一阈值判定：本轮上下文超阈值就先进 compress 压缩历史，再回 think 继续。
-- 有声书不再单独走子图：整条管线就是 act 里的一个工具，各步骤与各处人审打包成可恢复的任务（`@task`）——人审在中断处 park，裁决后 resume 续跑，已完成步骤重放时命中缓存。
+- context 与 act 出口共用同一阈值判定：本轮上下文超过阈值时进入 compress 压缩历史，压缩完成后返回 think；未超阈值时 act 直接返回 think。
+- 工具按业务域注册：project / volume / chapter / character 的读写工具，research 检索类（素材库、写作经验、联网搜索与网页抓取），chatrecord，delegation 子代理委派，audiobook 管线。act 节点串行执行本轮全部工具调用。
+- 写入类工具与关键决策处设置人审中断：执行至 `request_approval` 时图在断点挂起（park），前端渲染审核卡；裁决经 `resume` 提交后从断点续跑。每个项目同一时刻仅允许一个运行中的会话（单 run 闸门）。
+
+#### 子代理
+
+`agent/subagents/` 提供四种受委派的能力，经主图的 delegation 工具调用：**writing**（依据任务书起草正文或修改稿件，产出先经 lint 校验，不合格打回重写）、**analysis**（多维度文本分析）、**summary**（分场景摘要，用于上下文压缩与章节总结）、**assignment**（将模糊需求整理为结构化任务书）。
+
+#### 有声书管线
+
+`agent/audiobook_pipeline.py` 为一条九步流水线。对话入口（工具调用 + 5 处人审）与面板入口（`panel/*` REST 接口 + 向导 UI）共用同一套阶段产物；产物逐步落库，支持断点续跑：
+
+```text
+选章节 → 命名 → 提取出场人物 → 新建角色提案 ─┐
+配对（提取人物 ↔ 库内角色阶段）              ├ 每步产物落库
+音色映射（BGM / SFX）→ 旁白音色             │ 人审可断点
+→ 生成分段脚本 → 合成（逐段 TTS + 混音）   ─┘
+```
+
+合成期间由 GPU 闸门限流：按显存预算（总显存 × 安全系数）与瞬态任务并发上限放行 TTS 任务，bge-m3 的常驻占用提前扣除，避免语音合成与向量化争用显存。
+
+#### 模型接入层
+
+`agent/models/` 统一多供应商接入，激活的 Provider 配置决定路由：智谱（zai SDK）与通义（DashScope 原生协议，双 generation path 自动遍历）为自研封装，OpenAI 兼容 / Anthropic / Gemini / DeepSeek / Ollama 走 LangChain 适配。结构化输出经统一适配层屏蔽厂商差异（function calling 通道）；长文本任务（如整章脚本生成）的调用超时放宽至 10 分钟。
+
+#### 数据层
+
+- **SQLite**（`data/autostory.db`，SQLAlchemy async）：project / volume / chapter / character / characterstage / chatrecord / summary / audiobookscript / resource / material / userpreference 等表；
+- **ChromaDB**（`data/chroma/`）：向量库，包含随安装包分发的知识库种子与各项目挂载的素材向量；
+- **文件产物**（`data/` 下）：模型文件夹、合成音频、导入素材原文。
 
 ## 快速开始
 
