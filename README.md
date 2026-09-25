@@ -300,12 +300,12 @@ https://github.com/user-attachments/assets/1a46d5b3-9941-4f50-af3c-8d28369e7714
 
 ## 技术架构
 
-| 层                 | 技术栈                                                 | 主要用途                            |
-| ----------------- | --------------------------------------------------- | ------------------------------- |
-| 桌面壳 `src-tauri/`  | Tauri 2 · Rust                                      | 窗口、前端加载、后端进程生命周期管理              |
-| 前端 `frontend/`    | Vue 3（TSX 风格）· Vite 6 · Pinia · vue-router          | 页面和交互、SSE 对话流、有声书向导、可视化工作台      |
-| 后端 `backend/`     | FastAPI · LangGraph · SQLAlchemy (async) · ChromaDB | 作品、卷、章节、角色等资源管理 + Agent 编排、向量检索 |
-| 模型 `data/models/` | bge-m3 · Qwen3-TTS                                  | 本地向量化、语音合成                      |
+| 层                   | 技术栈                                                | 主要用途                                          |
+| -------------------  | ---------------------------------------------------  | -------------------------------                   |
+| 桌面壳 `src-tauri/`  | Tauri 2 · Rust                                       | 窗口、前端加载、后端进程生命周期管理                  |
+| 前端 `frontend/`     | Vue 3（TSX 风格）· Vite 6 · Pinia · vue-router        | 页面和交互、SSE 对话流、有声书向导、可视化工作台      |
+| 后端 `backend/`      | FastAPI · LangGraph · SQLAlchemy (async) · ChromaDB  | 作品、卷、章节、角色等资源管理 + Agent 编排、向量检索 |
+| 模型 `data/models/`  | bge-m3 · Qwen3-TTS                                   | 本地向量化、语音合成                                |
 
 后端一部分是常规的业务接口，负责作品、卷、章节、角色这些数据的增删改查；另一部分是 LangGraph 编排的 Agent。两边共用同一套数据库。
 
@@ -313,18 +313,18 @@ https://github.com/user-attachments/assets/1a46d5b3-9941-4f50-af3c-8d28369e7714
 
 ```text
 ┌─ AutoStory.exe（Tauri 壳）──────────────────────────────────┐
-│  WebView2 窗口                                               │
+│  WebView2 窗口                                              │
 │  ┌─ 前端 frontend/dist（随壳打包）────────────────────────┐  │
-│  │  页面 / 组件 / Pinia store / api 封装                  │  │
+│  │  页面 / 组件 / Pinia store / api 封装                  │ │
 │  └───────────────────┬──────────────────────────────────┘  │
-│                      │ HTTP / SSE / WebSocket（仅回环）      │
+│                      │ HTTP / SSE / WebSocket（仅回环）     │
 │  ┌───────────────────▼──────────────────────────────────┐  │
-│  │  后端 autostory-backend.exe（PyInstaller 产物）        │  │
-│  │  FastAPI 路由 ─ SQLite / Chroma ─ Agent（LangGraph）   │  │
+│  │  后端 autostory-backend.exe（PyInstaller 产物）       │  │
+│  │  FastAPI 路由 ─ SQLite / Chroma ─ Agent（LangGraph）  │  │
 │  └───────────────────┬──────────────────────────────────┘  │
-│                      │                                       │
-│  运行时管理：python（PyTorch 宿主）· ffmpeg · 本地模型      │
-└─────────────────────────────────────────────────────────────┘
+│                      │                                     │
+│  运行时管理：python（PyTorch 宿主）· ffmpeg · 本地模型        │
+└────────────────────────────────────────────────────────────┘
 ```
 
 三层各自独立成目录：桌面壳仅承担窗口管理与进程编排，业务逻辑位于前端与后端。
