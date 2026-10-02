@@ -1,19 +1,9 @@
-import { invoke } from "@tauri-apps/api/core";
-import { ok } from "./mock";
 import { http, createWsChannel, type WsChannel } from "./client";
+import { shell } from "../shell";
 import type { PrepareItem, CheckModelItem } from "./types";
 
-export const prepareEnvironment = async (): Promise<{ items: PrepareItem[] }> => {
-  if ("__TAURI_INTERNALS__" in window) {
-    return invoke<{ items: PrepareItem[] }>("prepare_environment");
-  }
-  return ok<{ items: PrepareItem[] }>({
-    items: [
-      { name: "pytorch", progress: 100, speed: "", status: "done" },
-      { name: "ffmpeg", progress: 100, speed: "", status: "done" },
-    ],
-  });
-};
+export const prepareEnvironment = (): Promise<{ items: PrepareItem[] }> =>
+  shell.prepareEnvironment();
 
 export const prepareModels = (
   onUpdate: (items: PrepareItem[]) => void,

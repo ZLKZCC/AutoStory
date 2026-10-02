@@ -152,7 +152,7 @@ export default defineComponent({
 
     const { addToast } = useToast();
     const downloading = ref(false);
-    // 音频直链是后端跨源地址：<a download> 在跨源下会被忽略、Tauri 还会拦导航，
+    // 音频直链是后端跨源地址：<a download> 在跨源下会被忽略，
     // 必须先 fetch 成 blob（同源 objectURL）再程序化触发下载
     const onDownload = async (e: MouseEvent) => {
       e.preventDefault();

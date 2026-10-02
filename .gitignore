@@ -1,3 +1,4 @@
+# Python
 __pycache__/
 *.py[cod]
 *.egg-info/
@@ -5,32 +6,38 @@ __pycache__/
 venv/
 .pytest_cache/
 
+# Node / 前端
 node_modules/
 frontend/dist/
 *.local
 *.tsbuildinfo
 
-src-tauri/target/
-src-tauri/gen/schemas/
+# 桌面壳构建产物
+electron/release/
 
+# 运行时数据（模型、向量库、生成产物）
 data/*
 !data/chroma/
 data/chroma/*
 !data/chroma/kb.db
-
 runtime/
 logs/
 workspace/
 
+# 后端构建产物
 backend/monitor/
 backend/dist/
 backend/build/
 docs-data/
+
+# 日志与临时文件
 *.log
 tsc_out.txt
 
+# 编辑器 / 系统
 .idea/
 .vscode/
 .trae/
+.zcode/
 *.swp
 Thumbs.db

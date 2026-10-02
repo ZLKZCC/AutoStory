@@ -2,6 +2,7 @@ import { defineComponent, ref, watch, onMounted, computed } from "vue";
 import { storeToRefs } from "pinia";
 import { useRoute, useRouter, RouterView } from "vue-router";
 import BootScreen from "./components/BootScreen";
+import TitleBar from "./components/TitleBar";
 import { ToastProvider } from "./components/Toast";
 import ConfirmDialog, { useConfirm } from "./components/ConfirmDialog";
 import StarDialog from "./components/StarDialog";
@@ -113,14 +114,6 @@ const Sidebar = defineComponent({
 
     return () => (
       <aside class="sidebar">
-        <div class="sidebar-brand">
-          <img src="/logo.png" alt="" class="sidebar-brand-logo" />
-          <div class="sidebar-brand-name">
-            <span class="auto">Auto</span>
-            <span class="story">Story{"\u200B"}</span>
-          </div>
-        </div>
-
         <nav class="sidebar-nav">
           <div class="sidebar-section-label">工作区</div>
 
@@ -341,17 +334,23 @@ export default defineComponent({
 
     return () =>
       !booted.value ? (
-        <BootScreen onComplete={() => (booted.value = true)} />
+        <>
+          <TitleBar overlay />
+          <BootScreen onComplete={() => (booted.value = true)} />
+        </>
       ) : (
-        <ToastProvider>
-          <ConfirmDialog>
-            <StarDialog />
-            <div class="app-shell">
-              <Sidebar />
-              <MainContent />
-            </div>
-          </ConfirmDialog>
-        </ToastProvider>
+        <>
+          <TitleBar />
+          <ToastProvider>
+            <ConfirmDialog>
+              <StarDialog />
+              <div class="app-shell">
+                <Sidebar />
+                <MainContent />
+              </div>
+            </ConfirmDialog>
+          </ToastProvider>
+        </>
       );
   },
 });

@@ -56,6 +56,7 @@ exe = EXE(
     strip=False,
     upx=False,
     console=True,
+    icon="../electron/build/icon.ico",
 )
 
 coll = COLLECT(

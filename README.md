@@ -7,7 +7,7 @@
 </div>
 
 <p align="center">
-  <img alt="version" src="https://img.shields.io/badge/version-0.1.0-3d8a4a" />
+  <img alt="version" src="https://img.shields.io/badge/version-v0.2.0-3d8a4a" />
   <a href="https://github.com/ZLKZCC/AutoStory">
     <img alt="GitHub repo" src="https://img.shields.io/badge/GitHub-ZLKZCC%2FAutoStory-181717?logo=github" />
   </a>
@@ -302,7 +302,7 @@ https://github.com/user-attachments/assets/1a46d5b3-9941-4f50-af3c-8d28369e7714
 
 | 层                   | 技术栈                                                | 主要用途                                          |
 | -------------------  | ---------------------------------------------------  | -------------------------------                   |
-| 桌面壳 `src-tauri/`  | Tauri 2 · Rust                                       | 窗口、前端加载、后端进程生命周期管理                  |
+| 桌面壳 `electron/`   | Electron · electron-builder                          | 窗口与托盘、preload 注入、后端进程生命周期管理、NSIS 打包 |
 | 前端 `frontend/`     | Vue 3（TSX 风格）· Vite 6 · Pinia · vue-router        | 页面和交互、SSE 对话流、有声书向导、可视化工作台      |
 | 后端 `backend/`      | FastAPI · LangGraph · SQLAlchemy (async) · ChromaDB  | 作品、卷、章节、角色等资源管理 + Agent 编排、向量检索 |
 | 模型 `data/models/`  | bge-m3 · Qwen3-TTS                                   | 本地向量化、语音合成                                |
@@ -312,8 +312,8 @@ https://github.com/user-attachments/assets/1a46d5b3-9941-4f50-af3c-8d28369e7714
 ### 总体结构
 
 ```text
-┌─ AutoStory.exe（Tauri 壳）──────────────────────────────────┐
-│  WebView2 窗口                                              │
+┌─ AutoStory.exe（Electron 主进程）───────────────────────────┐
+│  Chromium 窗口（无边框，标题栏自绘）                        │
 │  ┌─ 前端 frontend/dist（随壳打包）────────────────────────┐  │
 │  │  页面 / 组件 / Pinia store / api 封装                  │ │
 │  └───────────────────┬──────────────────────────────────┘  │
@@ -329,14 +329,15 @@ https://github.com/user-attachments/assets/1a46d5b3-9941-4f50-af3c-8d28369e7714
 
 三层各自独立成目录：桌面壳仅承担窗口管理与进程编排，业务逻辑位于前端与后端。
 
-### 桌面壳 `src-tauri/`
+### 桌面壳 `electron/`
 
-桌面壳不承载业务逻辑，职责集中在四方面：
+桌面壳不承载业务逻辑，职责集中在五方面：
 
-- **启动握手**：release 构建下随机选取空闲端口并生成 UUID 令牌，经初始化脚本注入 `window.__AUTOSTORY_PORT__` / `window.__AUTOSTORY_TOKEN__`。前端据此将全部请求发往 `127.0.0.1:{port}`，令牌经 `X-App-Token` 头或 `?token=` 查询参数传递，由后端校验。
+- **启动握手**：release 构建下随机选取空闲端口并生成 UUID 令牌，经 preload（contextBridge）注入。前端据此将全部请求发往 `127.0.0.1:{port}`，令牌经 `X-App-Token` 头或 `?token=` 查询参数传递，由后端校验。
 - **后端进程守护**：启动后轮询 `/api/health` 直至就绪；运行期间以 2 秒间隔探活，进程异常退出时自动重启（上限 3 次）；应用退出时一并结束后端进程。
-- **首次启动自举**：按依赖顺序安装 Python 嵌入式运行时、PyTorch（依据显卡选择 CUDA / CPU 版本）、ffmpeg；各步骤进度经 `prepare_environment` 命令暴露，由前端 BootScreen 轮询渲染。
-- **下载接管**：接管 WebView2 下载事件，弹出的系统"另存为"对话框确定保存路径（WebView2 缺省行为为静默保存至系统下载目录）。
+- **首次启动自举**：按依赖顺序安装 Python 嵌入式运行时、PyTorch（依据显卡选择 CUDA / CPU 版本）、ffmpeg，最后启动后端；各步骤进度经 IPC 暴露，由前端 BootScreen 轮询渲染，`runtime/manifest.json` 记录已装项、支持断点续装。
+- **下载接管**：接管 Chromium 下载事件，弹出的系统"另存为"对话框确定保存路径（Chromium 缺省行为为静默保存至系统下载目录）。
+- **窗口与托盘**：无边框窗口由前端自绘标题栏（CSS 拖拽区 + 最小化 / 最大化 / 关闭三键）；点关闭默认隐藏到系统托盘，托盘菜单提供"显示主界面 / 退出"，首次关闭时会询问并可选记住偏好。
 
 ### 前端 `frontend/`
 
@@ -430,7 +431,6 @@ context ─▶ think ─┬─▶ act（串行执行全部工具调用）──�
 - NVIDIA 显卡，显存 8GB 及以上（Qwen3-TTS 本地语音合成需要）
 - Node.js 22+ 与 pnpm
 - Python 3.12+
-- Rust 工具链（构建桌面版时需要）
 - `data/models/` 下的模型文件夹：
   - `bge-m3`
   - `Qwen3-TTS-12Hz-1.7B-Base`
@@ -475,48 +475,56 @@ http://localhost:5173
 
 ### 启动桌面壳（可选）
 
-从项目根目录运行：
+先启动前端 dev server（见上一步），然后另开终端运行：
 
 ```bash
-frontend\node_modules\.bin\tauri.cmd dev
+cd electron
+pnpm install
+pnpm start
 ```
 
-Tauri CLI 安装在 `frontend` 的 `devDependencies` 里。
+桌面壳默认连接 `http://localhost:5173`。
 
 开发模式下后端端口固定为 `8080`，所以需要先手动启动后端。
 
 ## 构建
 
-Windows 桌面版目前分两步构建：
+Windows 桌面版分两步构建：
 
 1. 用 PyInstaller 打包后端。
-2. 用 Tauri 生成 NSIS 安装包。
+2. 用 electron-builder 生成 NSIS 安装包。
 
 ```bash
 cd backend
 python -m PyInstaller autostory.spec --noconfirm
 
-cd ..
-frontend\node_modules\.bin\tauri.cmd build
+cd ../electron
+pnpm install
+pnpm dist
 ```
+
+安装包输出在 `electron/release/`。
 
 ### 应用目录
 
 ```text
 应用目录/
-├── AutoStory.exe         # 桌面壳，Tauri 生成
-├── backend/              # 后端，PyInstaller 产物
-│   ├── autostory-backend.exe
-│   └── _internal/        # 后端运行环境，不含 PyTorch
-├── data/
-│   ├── chroma/kb.db/     # 知识库种子（写作相关的一些知识）
-│   ├── models/           # 模型文件夹（首次启动自动下载）
-│   └── autostory.db 等   # 业务库与生成产物（运行时自生成）
-├── runtime/              # 首次启动自动下载安装
-│   ├── python/           # Python 运行时（PyTorch 宿主）
-│   ├── ffmpeg/
-│   └── manifest.json     # 已安装项清单（含 torch 变体）
-└── logs/                 # 运行日志（运行时生成）
+├── AutoStory.exe         # 桌面壳（主进程与渲染子进程同名，任务管理器归于一处）
+└── resources/
+    ├── app.asar          # 桌面壳脚本（main/preload）
+    ├── frontend/         # 前端构建产物
+    ├── backend/          # 后端，PyInstaller 产物
+    │   ├── autostory-backend.exe
+    │   └── _internal/    # 后端运行环境，不含 PyTorch
+    ├── data/
+    │   ├── chroma/kb.db/     # 知识库种子（写作相关的一些知识）
+    │   ├── models/           # 模型文件夹（首次启动自动下载）
+    │   └── autostory.db 等   # 业务库与生成产物（运行时自生成）
+    ├── runtime/              # 首次启动自动下载安装
+    │   ├── python/           # Python 运行时（PyTorch 宿主）
+    │   ├── ffmpeg/
+    │   └── manifest.json     # 已安装项清单（含 torch 变体）
+    └── logs/                 # 运行日志（运行时生成）
 ```
 
 安装包只带桌面壳、后端产物和知识库种子，其余在第一次启动时自动下载：
@@ -530,15 +538,18 @@ frontend\node_modules\.bin\tauri.cmd build
 
 ```text
 AutoStory/
-├── src-tauri/            # Tauri 2 桌面壳
-│   ├── src/main.rs
-│   ├── tauri.conf.json
-│   └── icons/
+├── electron/             # Electron 桌面壳
+│   ├── main.cjs          # 主进程：窗口、托盘、下载接管、环境准备管线
+│   ├── preload.cjs       # contextBridge 注入启动参数与壳能力
+│   ├── lib/              # 后端进程托管、环境自举（python/pytorch/ffmpeg）
+│   ├── build/icon.ico    # 应用图标（窗口 / 托盘 / 安装包）
+│   └── package.json      # electron-builder 打包配置（NSIS）
 ├── frontend/             # Vue 3 + Vite 前端
 │   └── src/
 │       ├── pages/        # Home / Project / Settings / Resources / KnowledgeBase
 │       ├── components/   # 对话气泡、有声书卡片、可视化工作台等
 │       ├── api/          # 按业务域拆分的接口封装
+│       ├── shell/        # 桌面壳能力抽象（窗口控制、环境快照）
 │       └── stores/       # Pinia 状态（chat=对话运行态，每项目一份分片）
 ├── backend/              # FastAPI + LangGraph 后端
 │   ├── main.py           # 应用入口

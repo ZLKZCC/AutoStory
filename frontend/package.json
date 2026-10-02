@@ -1,21 +1,19 @@
 {
   "name": "autostory-frontend",
   "private": true,
-  "version": "0.1.0",
+  "version": "0.2.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
     "test": "vitest run --config vitest.config.ts",
-    "test:watch": "vitest --config vitest.config.ts",
-    "tauri": "tauri"
+    "test:watch": "vitest --config vitest.config.ts"
   },
   "dependencies": {
     "@lobehub/icons-static-svg": "^1.94.0",
     "@microsoft/fetch-event-source": "^2.0.1",
     "@phosphor-icons/vue": "^2.2.1",
-    "@tauri-apps/api": "^2.11.1",
     "@tiptap/extension-heading": "^3.26.1",
     "@tiptap/extension-highlight": "^3.26.1",
     "@tiptap/extension-placeholder": "^3.26.1",
@@ -37,7 +35,6 @@
     "vue-router": "^4.5.0"
   },
   "devDependencies": {
-    "@tauri-apps/cli": "^2.11.5",
     "@vitejs/plugin-vue": "^5.2.0",
     "@vitejs/plugin-vue-jsx": "^4.1.0",
     "@vue/test-utils": "^2.5.0",

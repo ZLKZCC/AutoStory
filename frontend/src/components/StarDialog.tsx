@@ -1,15 +1,15 @@
 import { defineComponent, onMounted, ref } from "vue";
-import { invoke } from "@tauri-apps/api/core";
 import Modal from "./Modal";
 import Button from "./Button";
 import { PhGithubLogo, PhStar } from "@phosphor-icons/vue";
+import { shell } from "../shell";
 import "./StarDialog.css";
 
 const REPO_URL = "https://github.com/ZLKZCC/AutoStory";
 const SHOWN_KEY = "autostory:star-dialog-shown";
 
 const openRepo = () => {
-  invoke("open_url", { url: REPO_URL }).catch(() => {
+  shell.openUrl(REPO_URL).catch(() => {
     window.open(REPO_URL, "_blank");
   });
 };

@@ -39,7 +39,7 @@ _RETRY_BASE_DELAY = 2.0  # 指数退避基数（2/4/8/16s + 随机抖动）
 # 并发与请求节流：多仓库同时下载时压制瞬时请求密度
 _DOWNLOAD_CONCURRENCY = 2  # 同时下载的模型数上限，其余排队 pending
 _API_MIN_INTERVAL = 1.0    # 全局 API/文件请求发起的最小间隔（秒）
-_USER_AGENT = "AutoStory/0.1.0"
+_USER_AGENT = "AutoStory/v0.2.0"
 
 # 源测速排序缓存：无可达源时用短缓存，网络恢复后尽快重测
 _SOURCE_CACHE_TTL = 60.0

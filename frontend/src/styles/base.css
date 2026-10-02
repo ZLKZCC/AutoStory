@@ -61,6 +61,7 @@ textarea {
   --sidebar-hover: rgba(0, 0, 0, 0.04);
   --sidebar-active: rgba(217, 104, 48, 0.08);
   --sidebar-width: 228px;
+  --titlebar-h: 40px;
 
   --glass-bg: rgba(255, 255, 255, 0.42);
   --glass-bg-hover: rgba(255, 255, 255, 0.58);

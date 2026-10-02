@@ -1,13 +1,13 @@
 import ReconnectingWebSocket from "reconnecting-websocket";
 import { fetchEventSource } from "@microsoft/fetch-event-source";
 
-const runtime = window as unknown as {
-  __AUTOSTORY_PORT__?: number;
-  __AUTOSTORY_TOKEN__?: string;
+// Electron 壳经 contextBridge 暴露的启动参数（见 electron/preload.cjs）
+const electronBoot = window as unknown as {
+  autostoryBoot?: { port?: number; token?: string };
 };
 
-const backendPort = () => runtime.__AUTOSTORY_PORT__ ?? 8080;
-const appToken = () => runtime.__AUTOSTORY_TOKEN__ ?? "";
+const backendPort = () => electronBoot.autostoryBoot?.port ?? 8080;
+const appToken = () => electronBoot.autostoryBoot?.token ?? "";
 
 const apiOrigin = () =>
   `http${location.protocol === "https:" ? "s" : ""}://127.0.0.1:${backendPort()}`;
