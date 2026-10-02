@@ -8,7 +8,8 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: var(--glass-bg);
+  /* 暖纸色调（同 --color-canvas-alt），与侧栏和内容区过渡自然，避免生硬白条 */
+  background: rgba(248, 246, 244, 0.82);
   backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
   -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
   border-bottom: 1px solid var(--color-border-light);

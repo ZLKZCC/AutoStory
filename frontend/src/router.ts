@@ -13,5 +13,7 @@ export const router = createRouter({
     { path: "/settings", component: SettingsPage },
     { path: "/resources", component: ResourcesPage },
     { path: "/knowledge-base", component: KnowledgeBasePage },
+    // 桌面壳以 /index.html 路径加载页面，未知路径一律回到主页
+    { path: "/:pathMatch(.*)*", redirect: "/" },
   ],
 });

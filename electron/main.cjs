@@ -181,7 +181,8 @@ function createWindow() {
       setTimeout(() => win.loadURL(devUrl).catch(() => {}), 2000);
     });
   } else {
-    win.loadURL("app://localhost/index.html");
+    // 根路径加载（vue-router history 模式按 pathname 匹配路由，必须落在 "/" 上）
+    win.loadURL("app://localhost/");
   }
 
   return win;
