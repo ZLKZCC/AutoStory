@@ -20,7 +20,9 @@
 
 ## 项目背景
 
-AutoStory 是一个用于写作的AI桌面应用，主要面向长篇小说创作。你可以同时创建多个作品，每个作品里除了包含章节正文外，还包含分卷、大纲、世界线、角色设定等用于长篇创作时可能用到的信息，这些内容同时也可被 AI 进行编辑和修改。本应用还接入了 Qwen3-TTS，所以章节创作完成之后，可以将指定的章节转换为有声音频。
+AutoStory 是一个用于写作的AI桌面应用，主要面向长篇小说创作。你可以同时创建多个作品，每个作品里除了具体的章节正文外，还包含了用于管理分卷、章节、大纲、世界线、角色设定的工作台。
+
+写的时候可以让 AI 帮忙起草或修改这些内容；本应用还接入了 Qwen3-TTS，所以章节创作完成之后，还可以将指定的章节转换为有声音频。
 
 <p align="center">
   <img src="MainPage0.png" alt="AutoStory 首页" width="92%" />
@@ -43,41 +45,32 @@ AutoStory 是一个用于写作的AI桌面应用，主要面向长篇小说创�
 <tr>
 <td>
 
-
-
 https://github.com/user-attachments/assets/708f60c1-6f3f-4eeb-8342-e676c9d2ba7c
 
 
 
 
 
-
 </td>
 </tr>
 <tr>
 <td>
-  
 
 https://github.com/user-attachments/assets/4b0095a7-e1bf-407b-a1f9-95db72f46645
 
-
 </td>
 </tr>
 
 <tr>
 <td>
 
-
-
 https://github.com/user-attachments/assets/1a46d5b3-9941-4f50-af3c-8d28369e7714
-
 
 
 
 </td>
 </tr>
 </table>
-
 
 完整音频（14:49）：[audiobook-sample.mp3](audiobook-sample.mp3)
 
@@ -298,12 +291,12 @@ https://github.com/user-attachments/assets/1a46d5b3-9941-4f50-af3c-8d28369e7714
 
 ## 技术架构
 
-| 层                   | 技术栈                                                | 主要用途                                          |
-| -------------------  | ---------------------------------------------------  | -------------------------------                   |
-| 桌面壳 `electron/`   | Electron · electron-builder                          | 窗口与托盘、preload 注入、后端进程生命周期管理、NSIS 打包 |
-| 前端 `frontend/`     | Vue 3（TSX 风格）· Vite 6 · Pinia · vue-router        | 页面和交互、SSE 对话流、有声书向导、可视化工作台      |
-| 后端 `backend/`      | FastAPI · LangGraph · SQLAlchemy (async) · ChromaDB  | 作品、卷、章节、角色等资源管理 + Agent 编排、向量检索 |
-| 模型 `data/models/`  | bge-m3 · Qwen3-TTS                                   | 本地向量化、语音合成                                |
+| 层                 | 技术栈                                                 | 主要用途                                |
+| ----------------- | --------------------------------------------------- | ----------------------------------- |
+| 桌面壳 `electron/`   | Electron · electron-builder                         | 窗口与托盘、preload 注入、后端进程生命周期管理、NSIS 打包 |
+| 前端 `frontend/`    | Vue 3（TSX 风格）· Vite 6 · Pinia · vue-router          | 页面和交互、SSE 对话流、有声书向导、可视化工作台          |
+| 后端 `backend/`     | FastAPI · LangGraph · SQLAlchemy (async) · ChromaDB | 作品、卷、章节、角色等资源管理 + Agent 编排、向量检索     |
+| 模型 `data/models/` | bge-m3 · Qwen3-TTS                                  | 本地向量化、语音合成                          |
 
 后端一部分是常规的业务接口，负责作品、卷、章节、角色这些数据的增删改查；另一部分是 LangGraph 编排的 Agent。两边共用同一套数据库。
 
@@ -341,13 +334,13 @@ https://github.com/user-attachments/assets/1a46d5b3-9941-4f50-af3c-8d28369e7714
 
 五个路由页：
 
-| 路由 | 页面 | 内容 |
-| --- | --- | --- |
-| `/` | Home | 作品列表、新建 / 批量管理 |
-| `/project/:id` | Project | 创作工作台：卷章树、正文编辑、可视化世界线、角色、AI 对话、有声书向导 |
-| `/settings` | Settings | 模型供应商管理、本地模型同步 |
-| `/resources` | Resources | 音频库（BGM / SFX） |
-| `/knowledge-base` | KnowledgeBase | 素材库：导入、分块、向量检索 |
+| 路由                | 页面            | 内容                                   |
+| ----------------- | ------------- | ------------------------------------ |
+| `/`               | Home          | 作品列表、新建 / 批量管理                       |
+| `/project/:id`    | Project       | 创作工作台：卷章树、正文编辑、可视化世界线、角色、AI 对话、有声书向导 |
+| `/settings`       | Settings      | 模型供应商管理、本地模型同步                       |
+| `/resources`      | Resources     | 音频库（BGM / SFX）                       |
+| `/knowledge-base` | KnowledgeBase | 素材库：导入、分块、向量检索                       |
 
 `src/api/` 为统一接口层。`client.ts` 承担全部横切职责：基址取注入端口、令牌头注入、SSE（基于 fetch-event-source）、WebSocket 自动重连、直链资源（音频等）以 `?token=` 查询参数携带令牌。其余模块按业务域拆分（projects / chapters / characters / chat / audiobook / resources / knowledgeBase 等），页面层不直接调用 fetch。
 
@@ -368,19 +361,19 @@ https://github.com/user-attachments/assets/1a46d5b3-9941-4f50-af3c-8d28369e7714
 
 所有路由统一挂在 `/autostory/` 前缀下，按域分组：
 
-| 域 | 前缀 | 主要端点 |
-| --- | --- | --- |
-| 作品 | `/project` | CRUD、概念 / 世界线读写、文件解析入库、素材库挂载 |
-| 卷 / 章节 | `/volume` `/chapter` | 卷 CRUD、章节增删改查、插入、拖拽重排 |
-| 角色 | `/character` `/characterstage` | 角色与阶段 CRUD、阶段音色生成与试听 |
-| 对话 | `/chat` | `sendmessage` / `resume` / `cancel`（SSE）、`context_size` |
-| 对话记录 | `/chatrecord` | 历史记录 CRUD |
-| 有声书 | `/audiobookscript` | `panel/*` 面板九步接口（见下）、合成 SSE 流、脚本 CRUD |
-| 音频库 | `/resource` | BGM / SFX 上传管理、脚本-音频映射 |
-| 素材 | `/material` | 导入（异步任务 + 进度）、分块、向量检索 |
-| 供应商 | `/provider` | LLM 供应商 CRUD、连通性测试、激活切换 |
-| 运行环境 | `/environment` `/gpu` | 本地模型检查、`sync_model` WS 下载进度、GPU 闸门状态 |
-| 偏好 | `/userpreference` | 分块模型参数等用户偏好 |
+| 域      | 前缀                             | 主要端点                                                    |
+| ------ | ------------------------------ | ------------------------------------------------------- |
+| 作品     | `/project`                     | CRUD、概念 / 世界线读写、文件解析入库、素材库挂载                            |
+| 卷 / 章节 | `/volume` `/chapter`           | 卷 CRUD、章节增删改查、插入、拖拽重排                                   |
+| 角色     | `/character` `/characterstage` | 角色与阶段 CRUD、阶段音色生成与试听                                    |
+| 对话     | `/chat`                        | `sendmessage` / `resume` / `cancel`（SSE）、`context_size` |
+| 对话记录   | `/chatrecord`                  | 历史记录 CRUD                                               |
+| 有声书    | `/audiobookscript`             | `panel/*` 面板九步接口（见下）、合成 SSE 流、脚本 CRUD                   |
+| 音频库    | `/resource`                    | BGM / SFX 上传管理、脚本-音频映射                                  |
+| 素材     | `/material`                    | 导入（异步任务 + 进度）、分块、向量检索                                   |
+| 供应商    | `/provider`                    | LLM 供应商 CRUD、连通性测试、激活切换                                 |
+| 运行环境   | `/environment` `/gpu`          | 本地模型检查、`sync_model` WS 下载进度、GPU 闸门状态                    |
+| 偏好     | `/userpreference`              | 分块模型参数等用户偏好                                             |
 
 #### Agent 主图
 
